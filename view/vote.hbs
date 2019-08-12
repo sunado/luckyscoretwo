@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vote Pages</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .space {
+            height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <h3>Chủ đề tuần này</h3>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <h4> <i>Làm sao để trở thành dev ?</i></h4>
+            </div>
+        </div>
+        <div class="row space"></div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <span class="anchor" id="formLogin"></span>
+                <!-- form card login -->
+                <div class="card card-outline-secondary">
+                    <div class="card-header">
+                        <h3 class="mb-0">Bình chọn</h3>
+                    </div>
+                    <div class="card-body">
+                        <form autocomplete="off" class="form" id="formLogin" name="formLogin" role="form">
+                            <div class="form-group">
+                                <label for="uname1">Tên của bạn</label>
+                                <input class="form-control" id="uname1" name="uname1" required="" type="text"
+                                    placeholder="Vui lòng nhập id của bạn..." data-provide="typeahead"
+                                    autocomplete="off">
+
+                            </div>
+                            <div class="form-group">
+                                <label for="team1">Lựa chọn team</label>
+                                <select class="custom-select" id="team1">
+                                        <option selected>Choose...</option>
+                                        <option value="1">Team đồng ý</option>
+                                        <option value="2">Team phản đối</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-success float-right" type="button" id="submitBtn">Xác nhận</button>
+                        </form>
+                    </div>
+                    <!--/card-block-->
+                </div><!-- /form card login -->
+            </div>
+        </div>
+    </div>
+    <!-- <footer class="footer mt-auto py-3">
+        <div class="container">
+            <span class="text-muted">Copyright @ sunado 2019</span>
+        </div>
+    </footer> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+
+    <script>
+
+        function doVote(user,team) {
+            
+        }
+
+        $(document).ready(function () {
+            //TODO add all user name
+            var data = ["dinhhv", "quangdv", "hanhdh2", "linhnt", "hongntt", "tuyettt", "tungnd", "yendth"];
+            $("#uname1").typeahead({ source: data });
+
+            $("#submitBtn").click(() => {
+                
+                // Get a reference to the database service
+                const usename = $("#uname1").val()
+                const voteNum = $("#team1").val()
+                console.log("Clicked " + usename + " " + voteNum );
+            });
+        });
+
+    </script>
+</body>
+
+</html>

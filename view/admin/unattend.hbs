@@ -1,0 +1,55 @@
+      <ol class="breadcrumb" id="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin/">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Unattend</li>
+      </ol>
+    
+    <div class="row top-buffer justify-content-center">
+        <div class="ui fluid search selection dropdown col col-md-3">
+            <input type="hidden" name="user" id="user-id">
+            <i class="dropdown icon"></i>
+            <div class="default text">{{title}}</div>
+            <div class="menu">
+            {{#each votes as |vote voteId| }}
+                {{!-- <option data-value="{{user.id}}">{{user.name}}</option> --}}
+                <div class="item" data-value="{{voteId}}">{{vote.name}}</div>
+            {{/each}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-table"></i> Missing People 
+            <button id='addBtn' class="btn btn-primary float-right" data-toggle="modal" data-target="#adduserModal" ><i class="fa fa-plus"></i></button> 
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th class="text-center" >ID</th>
+                    <th class="text-center">Name</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Name</th>
+                </tr>
+                </tfoot>
+                <tbody>
+
+                {{#each users as |user userId| }}
+                    <tr >
+                        <td>{{user.id}}</td>
+                        <td>{{user.name}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+            </div>
+        </div>
+        <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+    </div>

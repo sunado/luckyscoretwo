@@ -1,0 +1,51 @@
+      <ol class="breadcrumb" id="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Status</li>
+      </ol>
+      {{#if error}}
+          <div class="alert alert-danger">{{error}}</div>
+      {{/if}}
+      <div class= "card card-login mx-auto mt-5" >
+        <div class="card-header"></div>
+        <div class="card-body">
+            <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="names">Vote Name: </label>
+                {{#if onVote}}
+                    <label class="form-control" id="names"> {{onVote}} </label>
+                {{/if}}
+                {{#if onStop}}
+                    <input class="form-control" id="names" type="text" aria-describedby="names" placeholder="Enter names" name="name">
+                {{/if}}
+            </div>
+            {{#if onVote}}
+                <input class="btn btn-danger btn-block change-status" type="button" value="Finish" id="change-status">
+            {{/if}}
+            {{#if onStop}}
+                <input class="btn btn-success btn-block change-status" type="button" value="Start" id="change-status">
+            {{/if}}
+            </form>
+        </div>
+      </div>
+      
+
+      <!-- Start Modal-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Start?</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">Select "OK" below if you are ready to start Vote session.</div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            <a class="btn btn-primary" href="/login">Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>

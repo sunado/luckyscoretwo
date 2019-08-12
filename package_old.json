@@ -1,0 +1,25 @@
+{
+  "name": "luckyscore",
+  "version": "0.0.1",
+  "description": "rate score",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo done"
+  },
+  "author": "quangdv",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "browser-sync": "^2.24.5",
+    "child_process": "^1.0.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^4.0.1",
+    "hbs": "^4.0.1",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.2.3",
+    "node-sass": "^4.9.2"
+  }
+}
