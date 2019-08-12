@@ -78,8 +78,7 @@ exports.addUser = async (req,res,next) => {
         } else {
             var n = new UserModel({
                 id: req.body.id,
-                name: req.body.name,
-                vote: []
+                name: req.body.name
             })
 
             await n.save()
@@ -126,22 +125,20 @@ exports.showVoteView = async (req,res,next) => {
             res.render('404') 
         } else {
             let users = await UserModel.find()
-            res.render('vote',{users: users,title: "Bình Chọn " + votes[0].name})
+            res.render('vote',{users: users,title: votes[0].name})
         }
     }catch(e){
         res.render('404')
     }
 }
 
-//
+//TODO Update this function
 exports.onVote = async (req,res,next) => {
-    console.log(req.body.userid);
-    var sc1 = parseInt(req.body.sc1);
-    var sc2 = parseInt(req.body.sc2);
-    var sc3 = parseInt(req.body.sc3);
-    var sc4 = parseInt(req.body.sc4);
+    console.log(req.body.userid)
+    var voteNum = parseInt(req.body.voteNum)
+    let userid = req.body.userid
     
-    if(!validate(sc1)|| !validate(sc2) || !validate(sc3) || !validate(sc4)) {
+    if(voteNum != 1 && voteNum != 2) {
 
         res.send({error: "The data is invalid"})
     } else {
@@ -149,34 +146,57 @@ exports.onVote = async (req,res,next) => {
         try {
             let user = await UserModel.findOne({id: req.body.userid}).exec()
             let votes = await VoteList.find().limit(1).sort({$natural:-1}).exec()
+            let vote = votes[0]
+            if(voteNum == 1){
+                let oldvoteIndex = vote.negativeUser.findIndex(x => x.id === userid);
+                let lastCount = 0;
+                
+                if(oldvoteIndex > -1){
+                    lastCount = vote.negativeUser[oldvoteIndex].count;
+                    vote.negativeUser.splice(oldvoteIndex,1);
+                }
+                
+                let checkvoteIndex = vote.positiveUser.findIndex(x => x.id === userid);
 
-            if( user.votes.length > 0 && user.votes[user.votes.length-1].name == votes[0].id ){
-                //TODO
-                let lastVote = user.votes[user.votes.length-1]
-                lastVote.TC1 = sc1
-                lastVote.TC2 = sc2
-                lastVote.TC3 = sc3
-                lastVote.TC4 = sc4
-                lastVote.count = lastVote.count + 1
-                lastVote.data = Date.now()
+                if(checkvoteIndex != -1){
+                    res.send({error: "Bạn đã chọn lựa chọn này rồi"})
+                    return;
+                }
+
+                vote.positiveUser.push({
+                    id: userid,
+                    count: lastCount + 1
+                })
+                
             } else {
-                user.votes.push({
-                    name: votes[0].id,
-                    TC1: sc1,
-                    TC2: sc2,
-                    TC3: sc3,
-                    TC4: sc4,
-                    count: 1,
-                    date: Date.now()
+                let oldvoteIndex = vote.positiveUser.findIndex(x => x.id === userid);
+                let lastCount = 0;
+                
+                if(oldvoteIndex > -1){
+                    lastCount = vote.positiveUser[oldvoteIndex].count;
+                    vote.positiveUser.splice(oldvoteIndex,1);
+                }
+                
+                let checkvoteIndex = vote.negativeUser.findIndex(x => x.id === userid);
+                
+                if(checkvoteIndex != -1){
+                    res.send({error: "Bạn đã chọn lựa chọn này rồi"})
+                    return;
+                }
+
+                vote.negativeUser.push({
+                    id: userid,
+                    count: lastCount + 1
                 })
             }
 
-            await user.save()
+
+            await vote.save()
 
             res.send({success: "done"})
         }catch(e){
             console.log(e)
-            res.send({error: "Cannot read database"})
+            res.send({error: "Bình chọn thất bại"})
         }
     }
 }
@@ -206,39 +226,15 @@ exports.adminDashboard = async (req,res,next) => {
         if(votes.length <= num) {
             throw "Out of array"
         }
+
+        if(votes.length == 0){
+            res.render('admin/blank',{message: ""})
+            return
+        }
+
         let vote_ = votes[num]        
-        let result = await UserModel.find({votes: {$elemMatch: {name: vote_.id}}}).exec()
-        var user_votes = []
-        var stastic = [
-            {name: "Trình bày (30%)", A: 0, B: 0, C: 0, D: 0, Sum: ''},
-            {name: "Nội dung (35%)", A: 0, B: 0, C: 0, D: 0, Sum: ''},
-            {name: "Hình thức (20%)", A: 0, B: 0, C: 0, D: 0, Sum: ''},
-            {name: "Phản biện (15%)", A: 0, B: 0, C: 0, D: 0, Sum: ''},
-            {name: "W Trung bình:", A: 0, B: 0, C: 0, D: 0, Sum: 0}
-        ]
-
-        result.forEach(element => {
-            const vote = element.votes[element.votes.length-1]
-            const user_vote = {
-                id: element.id,
-                TC1: score2String(vote.TC1),
-                TC2: score2String(vote.TC2),
-                TC3: score2String(vote.TC3),
-                TC4: score2String(vote.TC4),
-                count: vote.count
-            }
-            
-            user_votes.push(user_vote)
-
-            countHelper(0,vote.TC1,stastic)
-            countHelper(1,vote.TC2,stastic)
-            countHelper(2,vote.TC3,stastic)
-            countHelper(3,vote.TC4,stastic)
-
-        })
-        
-        calHelper(stastic)
-
+        let stastic 
+        let user_votes
         res.render('admin/dashboard',{title: vote_.name, users: user_votes, dats: stastic, votes: votes})
         
     } catch (e) {
@@ -248,36 +244,25 @@ exports.adminDashboard = async (req,res,next) => {
     
 }
 
-//
+//TODO update this function
 exports.adminGetVoteData = async (req,res,next) => {
     try {
         let vote_now = await VoteList.find().limit(1).sort({$natural:-1}).exec()
         if(vote_now.length == 0) {
             res.json({})
         } else {
-            let result = await UserModel.find({votes: {$elemMatch: {name: vote_now[0].id}}}).exec()
+            let vote = vote_now[0];
             var vote_data = {}
-                    vote_data.TC1 = [0,0,0,0]
-                    vote_data.TC2 = [0,0,0,0]
-                    vote_data.TC3 = [0,0,0,0]
-                    vote_data.TC4 = [0,0,0,0]
-
-                    result.forEach(element => {
-                        //console.log(element)
-                        const vote= element.votes[element.votes.length - 1]
-                        vote_data.TC1[4 - vote.TC1] +=1
-                        vote_data.TC2[4 - vote.TC2] +=1
-                        vote_data.TC3[4 - vote.TC3] +=1
-                        vote_data.TC4[4 - vote.TC4] +=1
-                    });
-                    //console.log(vote_data)
-                    res.json(vote_data)
+            vote_data.data = [vote.positiveUser.length, vote.negativeUser.length]
+            console.log(vote_data)
+            res.json(vote_data)
         }
     }catch(e){
         res.json({})
     }
 }
 
+//TODO update this function
 exports.adminUnattend = async (req,res, next) => {
     try {
 
@@ -293,10 +278,16 @@ exports.adminUnattend = async (req,res, next) => {
         }
         let vote = votes[num]
        // console.log(vote)
-        let users = await UserModel.find({votes: {$not: {$elemMatch: {name:  vote.id }}}}).exec()
+        let users = await UserModel.find().exec()
+
+        let unattends = users.filter( user => {
+            return vote.negativeUser.findIndex(x => x.id === user.id) == -1 
+            && vote.positiveUser.findIndex(x => x.id === user.id) == -1 
+        })
+
         //console.log(vote)
         //console.log("==================")
-        res.render('admin/unattend',{users: users, votes: votes, title: vote.name})
+        res.render('admin/unattend',{users: unattends, votes: votes, title: vote.name})
     }catch(e) {
         console.log(e)
         res.render('admin/blank',{err: e})
@@ -332,11 +323,13 @@ exports.adminUpdateStatus = async (req,res,next) => {
 
         if(votes.length == 0){
             voteNew = new VoteList({
-                id: 1,
+                id: 0,
                 status: "run",
                 name: req.body.name,
                 startDate: Date.now(),
                 dueDate: Date.now(),
+                positiveUser: [],
+                negativeUser: [],
             })
 
             await voteNew.save()
@@ -351,6 +344,8 @@ exports.adminUpdateStatus = async (req,res,next) => {
                 name: req.body.name,
                 startDate: Date.now(),
                 dueDate: Date.now(),
+                positiveUser: [],
+                negativeUser: [],
             })
             await voteNew.save( )
 
@@ -391,52 +386,3 @@ exports.adminCreate = async(req,res,next) => {
     }
 }
 
-/* Utils */
-//
-function validate(num){
-    if(isNaN(num) || num > 4 || num < 1) {
-        return false;
-    } else {
-        return true;
-    }
-}
-//
-function score2String(score) {
-    switch(score) {
-        case 4: return 'A'
-        case 3: return 'B'
-        case 2: return 'C'
-        case 1: return 'D'
-        default: return '?'
-    }
-}
-//
-function countHelper(index, score, stastic) {
-    switch(score) {
-        case 4:
-            stastic[index].A = stastic[index].A + 1
-            break
-        case 3:
-            stastic[index].B = stastic[index].B + 1
-            break
-        case 2: 
-            stastic[index].C = stastic[index].C + 1
-            break
-        case 1: 
-            stastic[index].D = stastic[index].D + 1
-            break
-    }
-}
-//
-function calHelper(stastic) {
-    const weights = [30 ,35 ,20 ,15]
-    stastic[4].A = (stastic[0].A*weights[0] + stastic[1].A*weights[1] + stastic[2].A*weights[2] + stastic[3].A*weights[3])/100 
-    stastic[4].B = (stastic[0].B*weights[0] + stastic[1].B*weights[1] + stastic[2].B*weights[2] + stastic[3].B*weights[3])/100 
-    stastic[4].C = (stastic[0].C*weights[0] + stastic[1].C*weights[1] + stastic[2].C*weights[2] + stastic[3].C*weights[3])/100 
-    stastic[4].D = (stastic[0].D*weights[0] + stastic[1].D*weights[1] + stastic[2].D*weights[2] + stastic[3].D*weights[3])/100 
-
-
-    stastic.forEach(element => {
-        element.Sum = element.A*4 + element.B*3 + element.C*2 + element.D
-    })
-}

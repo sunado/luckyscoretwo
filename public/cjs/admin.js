@@ -92,7 +92,7 @@ $(document).ajaxStop( () => {
     if (lock == false) {
         switch (subView) {
             case "dashboard":
-                //console.log("d")
+                console.log("d")
                 {
                     $.getJSON('/admin/votedata', (res) => {
                         lock = true // dont run again
@@ -105,12 +105,12 @@ $(document).ajaxStop( () => {
                         var chart_config = {
                             type: 'bar',
                             data: {
-                                labels: ["A", "B", "C", "D"],
+                                labels: ["Ủng hộ", "Phản đối"],
                                 datasets: [{
                                 label: "Vote Result",
                                 backgroundColor: "rgba(2,117,216,1)",
                                 borderColor: "rgba(2,117,216,1)",
-                                data: [7, 10, 15, 20],
+                                data: [1, 1],
                                 }],
                             },
                             options: {
@@ -129,7 +129,7 @@ $(document).ajaxStop( () => {
                                 yAxes: [{
                                     ticks: {
                                     min: 0,
-                                    max: 25,
+                                    max: 22,
                                     maxTicksLimit: 5
                                     },
                                     gridLines: {
@@ -143,34 +143,37 @@ $(document).ajaxStop( () => {
                             }
                         }
                         // Bar Chart Example
-                        var ctx1 = document.getElementById("barchart1");
+                        var ctx1 = document.getElementById("myBarChart");
                         var chart1_config = jQuery.extend(true, {}, chart_config)
-                        chart1_config.data.datasets[0].data = res.TC1
+                        chart1_config.data.datasets[0].data = res.data
                         var myLineChart1 = new Chart(ctx1,chart1_config);
-    
-                        var ctx2 = document.getElementById("barchart2");
-                        var chart2_config = jQuery.extend(true, {}, chart_config)
-                        chart2_config.data.datasets[0].data = res.TC2
-                        var myLineChart2 = new Chart(ctx2,chart2_config);
-    
-                        var ctx3 = document.getElementById("barchart3");
-                        var chart3_config = jQuery.extend(true, {}, chart_config)
-                        chart3_config.data.datasets[0].data = res.TC3
-                        var myLineChart3 = new Chart(ctx3,chart3_config);
-    
-                        var ctx4 = document.getElementById("barchart4");
-                        var chart4_config = jQuery.extend(true, {}, chart_config)
-                        chart4_config.data.datasets[0].data = res.TC4
-                        var myLineChart4 = new Chart(ctx4,chart4_config);
+                        
+                        var pie_config = {
+                            type: 'pie',
+                            data: {
+                                labels: ["Ủng hộ", "Phản đối"],
+                                datasets: [{
+                                data: [0, 0],
+                                backgroundColor: ['#007bff', '#dc3545'],
+                                }],
+                            },
+                        }
+
+                        var ctx = document.getElementById("myPieChart");
+                        var pie1_config = jQuery.extend(true, {}, pie_config)
+                        pie1_config.data.datasets[0].data = res.data
+                        var myPieChart = new Chart(ctx, pie1_config);
                     })
     
                     $('.ui.dropdown').dropdown({
                         onChange: (val) => {
+                            console.log(val);
                             $.get('admin/dashboard/'+ val).done( (res) =>{
                                 $('#container').empty()
                                 $('#container').append(res)
                                 $('.table').DataTable()
                                 subView = 'dashboard' /*** */
+                                lock = false
                             })
                         }
                     });

@@ -22,7 +22,7 @@
         </div>
         <div class="row justify-content-md-center">
             <div class="col-md-6">
-                <h4> <i>Làm sao để trở thành dev ?</i></h4>
+                <h4> <i>{{title}}</i></h4>
             </div>
         </div>
         <div class="row space"></div>
@@ -64,15 +64,9 @@
             <span class="text-muted">Copyright @ sunado 2019</span>
         </div>
     </footer> -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
@@ -85,15 +79,45 @@
 
         $(document).ready(function () {
             //TODO add all user name
-            var data = ["dinhhv", "quangdv", "hanhdh2", "linhnt", "hongntt", "tuyettt", "tungnd", "yendth"];
-            $("#uname1").typeahead({ source: data });
+            var data = [ ""
+            {{#each users as |user userId| }} 
+                ,"{{user.id}}"
+            {{/each}}
+            ];
+            $("#uname1").typeahead({ 
+                source: data
+            });
 
             $("#submitBtn").click(() => {
                 
                 // Get a reference to the database service
-                const usename = $("#uname1").val()
+                const username = $("#uname1").val()
                 const voteNum = $("#team1").val()
-                console.log("Clicked " + usename + " " + voteNum );
+                if(username === ""){
+                    alert("Bạn vui lòng điền tên!");
+                    return;
+                }
+                if(data.indexOf(username) == -1){
+                    alert("Bạn vui lòng chọn đúng tên!");
+                    return;
+                }
+
+                if(voteNum != 1 && voteNum != 2){
+                    alert("Bạn vui lòng chọn team");
+                }
+
+                console.log("Clicked " + username + " " + voteNum );
+
+                $.post('/vote',{
+                    userid: username,
+                    voteNum: voteNum
+                }).done( (res) => {
+                    if(res.error){
+                       alert(res.error);
+                    } else {
+                       alert("Bình chọn thành công");
+                    }
+                });
             });
         });
 

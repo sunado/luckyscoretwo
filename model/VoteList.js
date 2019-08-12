@@ -5,6 +5,9 @@ var Schema = mongoose.Schema
 var VoteList = new Schema({
     id: String,
     name: String,
+    status: String,
+    startDate: Date,
+    dueDate:Date,
     positiveUser: [{
         id: String,
         count: Number

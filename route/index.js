@@ -3,7 +3,7 @@ var express = require('express')
 var router = express.Router()
 var controller = require('../controller/controller')
 
-//router.use(controller.filter);
+router.use(controller.filter);
 
 router.get('/', controller.showVoteView)
 
