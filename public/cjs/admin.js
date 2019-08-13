@@ -19,6 +19,20 @@ $(document).ready(function(){
             }
         })
     })
+    
+    $('.container-fluid').on('click','.removeVote', () => {
+        console.log(this.activeElement)
+        trs = this.activeElement
+        $.post('/admin/removeVote',{
+            userid: $(this.activeElement).attr('id')
+        }).done(function(res){
+            if(res){
+                var datatable = $('#dataTable').DataTable()
+
+                datatable.row($(trs).closest("tr")).remove().draw()
+            }
+        })
+    })
 
     //Add User request
     $('.submitBtn').click( () => {
@@ -195,6 +209,20 @@ $(document).ajaxStop( () => {
                                 $('#container').append(res)
                                 $('.table').DataTable()
                                 subView = 'unattend' /*** */
+                            })
+                        }
+                    })
+                }
+                break;
+            case "attend":
+                {
+                    $('.ui.dropdown').dropdown({
+                        onChange: (val) => {
+                            $.get('admin/attend/'+val).done( (res) =>{
+                                $('#container').empty()
+                                $('#container').append(res)
+                                $('.table').DataTable()
+                                subView = 'attend' /*** */
                             })
                         }
                     })

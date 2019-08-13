@@ -23,6 +23,12 @@ router.get('/admin/unattend', controller.adminUnattend)
 
 router.get('/admin/unattend/:num', controller.adminUnattend)
 
+router.get('/admin/attend', controller.adminAttend)
+
+router.get('/admin/attend/:num', controller.adminAttend)
+
+router.post('/admin/removeVote', controller.removeVote)
+
 router.get('/admin/status',controller.adminStatus)
 
 router.get('/admin/votedata', controller.adminGetVoteData)

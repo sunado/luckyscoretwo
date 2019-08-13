@@ -294,6 +294,65 @@ exports.adminUnattend = async (req,res, next) => {
     }
 }
 
+exports.adminAttend = async (req,res, next) => {
+    try {
+
+        //let allowDel = true
+        let votes = await VoteList.find().exec()
+        let num = votes.length - 1
+
+        if(req.params && req.params.num){
+            num = parseInt(req.params.num)
+            //allowDel = false
+        }
+        //console.log(votes)
+        if(votes.length <= num) {
+            throw "Out of array"
+        }
+        let vote = votes[num]
+       // console.log(vote)
+        let users = await UserModel.find().exec()
+
+        let attends = users.filter( user => {
+            return vote.negativeUser.findIndex(x => x.id === user.id) != -1 
+            || vote.positiveUser.findIndex(x => x.id === user.id) != -1 
+        })
+
+        //console.log(vote)
+        //console.log("==================")
+        res.render('admin/attend',{users: attends, votes: votes, title: vote.name})
+    }catch(e) {
+        console.log(e)
+        res.render('admin/blank',{err: e})
+    }
+}
+
+exports.removeVote = async(req,res,next) => {
+
+    let userid = req.body.userid
+
+    let votes = await VoteList.find().limit(1).sort({$natural:-1}).exec()
+    if(votes.length == 0) {
+        res.send({success: "OK"})
+        return
+    }
+    let vote = votes[0]
+    let voteIndex = vote.negativeUser.findIndex(x => x.id === userid);
+    if(voteIndex != -1) {
+        vote.negativeUser.splice(voteIndex,1);
+    }
+    
+    voteIndex =  vote.positiveUser.findIndex(x => x.id === userid);
+    
+    if(voteIndex != -1 ){
+        vote.positiveUser.splice(voteIndex,1);
+    }
+
+    await vote.save();
+    
+    res.send({success: "OK"})
+}
+
 //
 exports.adminStatus = async(req,res,next) => {
     try {
