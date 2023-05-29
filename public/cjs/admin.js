@@ -55,6 +55,31 @@ $(document).ready(function(){
         }
     })
 
+    $('#fileimport').change( () => {
+
+        var fr = new FileReader();
+
+        fr.onload = () => {
+            var content = fr.result.split(/\r?\n/);
+            content.forEach( e => {
+                var s = e.split(",");
+                if (s.length > 1) {
+                    $.post('/addUser',{
+                        id: s[0],
+                        name: s[1]
+                    }).done( () => {})
+                }
+            })
+            
+            $('#importuserModal').modal('toggle')
+        }
+
+        var fileOutput = document.getElementById("fileimport");
+        fr.readAsText(fileOutput.files[0])
+    })
+    
+
+
     //Ajax load view
     $('.c-control').click(function(){
         if(subView !== $(this).data('value')){
