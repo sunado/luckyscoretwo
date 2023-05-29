@@ -4,7 +4,7 @@
   "description": "vote for team",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js ",
     "test": "echo done"
   },
   "repository": {

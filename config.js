@@ -1,5 +1,5 @@
 
 module.exports = {
-    DATABASE: process.env.APPSETTING_MONGODB_CONNECTION_STRING,
+    DATABASE: 'mongodb://localhost:27017/lucky',
     SECRET: "helloiamcomeback"
 }

@@ -30,6 +30,6 @@ app.use(body_parser.urlencoded({extended: false}))
 
 app.use('/',route)
 
-const port = process.env.PORT || 8080
-app.listen(port, () => console.log("App run on port " + port))
+const port = process.env.PORT || 3000
+app.listen(port, '0.0.0.0', () => console.log("App run on port " + port))
 
