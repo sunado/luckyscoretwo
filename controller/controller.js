@@ -313,11 +313,23 @@ exports.adminAttend = async (req,res, next) => {
        // console.log(vote)
         let users = await UserModel.find().exec()
 
-        let attends = users.filter( user => {
+        let attendsPost = users.filter( user => {
+            return vote.positiveUser.findIndex(x => x.id === user.id) != -1 
+        }).map(x => {
+            let y = x
+            y["vote"] = "Positive"
+            return y
+        })
+        let attendsNeg = users.filter( user => {
             return vote.negativeUser.findIndex(x => x.id === user.id) != -1 
-            || vote.positiveUser.findIndex(x => x.id === user.id) != -1 
+        }).map(x => {
+            let y = x
+            y["vote"] = "Negative"
+            return y
         })
 
+        var attends = [...attendsPost, ...attendsNeg]
+        
         //console.log(vote)
         //console.log("==================")
         res.render('admin/attend',{users: attends, votes: votes, title: vote.name})

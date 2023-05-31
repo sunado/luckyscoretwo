@@ -32,6 +32,7 @@
                 <tr>
                     <th class="text-center" >ID</th>
                     <th class="text-center">Name</th>
+                    <th class="text-center">Vote</th>
                     <th class="text-center" width="15%">Remove</th>
                 </tr>
                 </thead>
@@ -39,6 +40,7 @@
                 <tr>
                     <th class="text-center">ID</th>
                     <th class="text-center">Name</th>
+                    <th class="text-center">Vote</th>
                     <th class="text-center" width="15%">Remove Vote</th>
                 </tr>
                 </tfoot>
@@ -48,7 +50,7 @@
                     <tr >
                         <td>{{user.id}}</td>
                         <td>{{user.name}}</td>
-                        
+                        <td>{{user.vote}}</td>
                         <td width="15%" class= "text-center" > 
                             <span><button id="{{user.id}}" class="btn btn-danger btn-rounded btn-sm removeVote" >Remove Vote</button> </span>
                         </td>
