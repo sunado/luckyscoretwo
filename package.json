@@ -28,6 +28,6 @@
     "gulp": "^4.0.2",
     "hbs": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.7.5"
+    "mongoose": "^5.13.20"
   }
 }
